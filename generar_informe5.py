@@ -568,7 +568,15 @@ def generar_texto_incidentes():
         f"El registro del top de amenazas corresponde al período comprendido "
         f"entre el 1 de {mes} de {anio} y la fecha registrada en el pantallazo. "
         f"En el período indicado no se han identificado incidentes de seguridad "
-        f"asociados a software malicioso en las plataformas monitoreadas."
+        f"asociados a software malicioso en las plataformas monitoreadas. "
+        f"Es importante reforzar los controles de seguridad asociados al software malicioso, "
+        f"tales como: monitoreo periódico de eventos de seguridad, actualización continua "
+        f"de herramientas antivirus, respaldo de las soluciones de seguridad y programas "
+        f"de concientización a los usuarios sobre phishing, descargas no autorizadas y "
+        f"buenas prácticas de seguridad de la información. La consolidación de estas "
+        f"medidas permitirá reducir el riesgo de incidentes, mantener la resiliencia "
+        f"operativa y garantizar el cumplimiento de los lineamientos de la operación."
+        f"{frase_top}"
         )
 
     # Total de incidentes
@@ -805,6 +813,24 @@ def formatear_nombre(nombre):
     partes = [p.capitalize() for p in partes]  # Capitaliza cada palabra
 
     return " ".join(partes)  # Une nuevamente el nombre formateado
+# ===================
+import re
+
+def normalizar_agencia(texto):
+    if not texto:
+        return ""
+
+    texto = str(texto).strip().upper()
+
+    # Elimina cualquier caracter que NO sea letra (incluye puntos, comas, etc.)
+    texto = re.sub(r'[^A-ZÁÉÍÓÚÑ ]', '', texto)
+
+    # Elimina espacios extra
+    texto = " ".join(texto.split())
+
+    return texto
+
+
 # ==============================
 # EXTRAER NOMBRES WHATSAPP
 # ==============================
@@ -825,7 +851,7 @@ def obtener_disponibles_portapapeles():
         # Detecta líneas tipo: "UBICACIÓN: SUR"
         if linea.upper().startswith("UBICACIÓN:"):
 
-            agencia = linea.split(":")[1].strip().upper()  # Extrae la agencia
+            agencia = normalizar_agencia(linea.split(":")[1])  # Extrae la agencia
 
         # Detecta líneas tipo: "JEFE DE SALA: Juan Perez"
         elif linea.upper().startswith("JEFE DE SALA:"):
@@ -846,7 +872,7 @@ def obtener_disponibles_portapapeles():
 
             if len(partes) == 2:
 
-                agencia = partes[0].strip().upper()
+                agencia = normalizar_agencia(partes[0])
                 nombre = formatear_nombre(partes[1].strip())
 
                 disponibles[agencia] = nombre  # Guarda directamente
@@ -1061,7 +1087,7 @@ def insertar_nombres(prs, disponibles):
     for shape in slide.shapes:
 
         # Obtiene el nombre del shape (se usa como identificador de agencia)
-        agencia = shape.name.strip().upper()
+        agencia = normalizar_agencia(shape.name)
 
         # Verifica que el shape corresponda a una agencia esperada y tenga texto
         if agencia in AGENCIAS_ESPERADAS and shape.has_text_frame:
