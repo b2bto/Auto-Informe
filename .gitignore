@@ -1,0 +1,11 @@
+venvNuse/
+__pycache__/
+*.pyc
+*.paint
+generar_informe.bkp.py
+dist/
+salida/
+~$*
+
+Grafico vesta 8am.xlsx
+Informe Semanal Enviar a NOC.xlsx

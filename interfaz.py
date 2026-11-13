@@ -46,10 +46,14 @@ atexit.register(cerrar_mutex)
 # =========================
 # RUTA BASE (PYINSTALLER)
 # =========================
-base_dir = os.path.dirname(os.path.abspath(__file__))
+if getattr(sys, "frozen", False):
+    base_dir = os.path.dirname(sys.executable)
+else:
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+
 os.chdir(base_dir)
 
-from generar_informe5 import generar_informe
+from generar_informe import generar_informe
 
 # =========================
 # MENSAJE EMERGENTE
@@ -89,10 +93,24 @@ def ejecutar_informe():
 
     try:
         generar_informe(turno)
-        mostrar_mensaje_auto("Informe generado correctamente")
+
+        mostrar_mensaje_auto(
+            "Proceso finalizado. Revise la carpeta de salida."
+        )
 
     except Exception as e:
-        mostrar_mensaje_auto(f"Error: {str(e)}")
+
+        import traceback
+
+        error = traceback.format_exc()
+
+        with open("error_informe.txt", "w", encoding="utf-8") as archivo:
+            archivo.write(error)
+
+        mostrar_mensaje_auto(
+            f"Error al generar informe: {str(e)}",
+            duracion=5000
+        )
 
 # =========================
 # VENTANA PRINCIPAL
